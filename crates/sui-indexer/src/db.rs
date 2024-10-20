@@ -194,7 +194,10 @@ pub mod setup_postgres {
     use diesel_async::RunQueryDsl;
     use tracing::info;
 
-    pub async fn reset_database(mut conn: Connection<'static>) -> Result<(), anyhow::Error> {
+    pub async fn reset_database(
+        mut conn: Connection<'static>,
+        should_run_migrations: bool,
+    ) -> Result<(), anyhow::Error> {
         info!("Resetting PG database ...");
 
         let drop_all_tables = "
@@ -242,8 +245,9 @@ pub mod setup_postgres {
             .execute(&mut conn)
             .await?;
         info!("Dropped all functions.");
-
-        run_migrations(conn).await?;
+        if should_run_migrations {
+            run_migrations(conn).await?;
+        }
         info!("Reset database complete.");
         Ok(())
     }
@@ -283,7 +287,7 @@ mod tests {
         .await
         .unwrap();
 
-        reset_database(pool.dedicated_connection().await.unwrap())
+        reset_database(pool.dedicated_connection().await.unwrap(), true)
             .await
             .unwrap();
         check_db_migration_consistency(&mut pool.get().await.unwrap())
@@ -304,7 +308,7 @@ mod tests {
         .await
         .unwrap();
 
-        reset_database(pool.dedicated_connection().await.unwrap())
+        reset_database(pool.dedicated_connection().await.unwrap(), true)
             .await
             .unwrap();
         let mut connection = pool.get().await.unwrap();
@@ -352,7 +356,7 @@ mod tests {
         .await
         .unwrap();
 
-        reset_database(pool.dedicated_connection().await.unwrap())
+        reset_database(pool.dedicated_connection().await.unwrap(), true)
             .await
             .unwrap();
 
@@ -379,7 +383,7 @@ mod tests {
         .await
         .unwrap();
 
-        reset_database(pool.dedicated_connection().await.unwrap())
+        reset_database(pool.dedicated_connection().await.unwrap(), true)
             .await
             .unwrap();
 

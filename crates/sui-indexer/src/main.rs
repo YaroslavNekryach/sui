@@ -72,14 +72,17 @@ async fn main() -> anyhow::Result<()> {
             Indexer::start_reader(&json_rpc_config, &registry, pool, CancellationToken::new())
                 .await?;
         }
-        Command::ResetDatabase { force } => {
+        Command::ResetDatabase {
+            force,
+            skip_migrations,
+        } => {
             if !force {
                 return Err(anyhow::anyhow!(
                     "Resetting the DB requires use of the `--force` flag",
                 ));
             }
 
-            reset_database(pool.dedicated_connection().await?).await?;
+            reset_database(pool.dedicated_connection().await?, !skip_migrations).await?;
         }
         Command::RunMigrations => {
             run_migrations(pool.dedicated_connection().await?).await?;

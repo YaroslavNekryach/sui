@@ -186,6 +186,8 @@ pub enum Command {
     ResetDatabase {
         #[clap(long)]
         force: bool,
+        #[clap(long, default_value_t = false)]
+        skip_migrations: bool,
     },
     /// Run through the migration scripts.
     RunMigrations,

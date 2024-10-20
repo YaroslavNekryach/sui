@@ -257,6 +257,7 @@ mod tests {
             Connection::dedicated(database.database().url())
                 .await
                 .unwrap(),
+            true,
         )
         .await
         .unwrap();

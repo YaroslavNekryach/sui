@@ -114,7 +114,7 @@ pub async fn start_indexer_writer_for_testing(
         let connection = Connection::dedicated(&db_url.parse().unwrap())
             .await
             .unwrap();
-        crate::db::reset_database(connection).await.unwrap();
+        crate::db::reset_database(connection, true).await.unwrap();
 
         let store_clone = store.clone();
         let mut ingestion_config = IngestionConfig::default();

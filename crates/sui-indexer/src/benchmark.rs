@@ -21,7 +21,7 @@ pub async fn run_indexer_benchmark(
     metrics: IndexerMetrics,
 ) {
     if config.reset_db {
-        reset_database(pool.dedicated_connection().await.unwrap())
+        reset_database(pool.dedicated_connection().await.unwrap(), true)
             .await
             .unwrap();
     } else {
