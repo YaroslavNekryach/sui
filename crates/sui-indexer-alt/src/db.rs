@@ -1,8 +1,6 @@
 // Copyright (c) Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-use std::time::Duration;
-
 use diesel_async::{
     pooled_connection::{
         bb8::{Pool, PooledConnection, RunError},
@@ -10,6 +8,7 @@ use diesel_async::{
     },
     AsyncPgConnection,
 };
+use std::time::Duration;
 use url::Url;
 
 #[derive(Clone)]

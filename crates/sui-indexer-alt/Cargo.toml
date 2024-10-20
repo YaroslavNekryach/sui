@@ -31,14 +31,19 @@ tokio-stream.workspace = true
 tokio-util.workspace = true
 tracing.workspace = true
 url.workspace = true
+tempfile.workspace = true
 
 mysten-metrics.workspace = true
 sui-storage.workspace = true
 sui-types.workspace = true
+sui-synthetic-ingestion.workspace = true
 
 [dev-dependencies]
 rand.workspace = true
 wiremock.workspace = true
-tempfile.workspace = true
 
 sui-types = { workspace = true, features = ["test-utils"] }
+
+[[bin]]
+name = "sui-indexer-alt-benchmark"
+path = "src/benchmark/main.rs"

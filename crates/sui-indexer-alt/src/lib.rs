@@ -3,6 +3,11 @@
 
 use std::{collections::BTreeSet, net::SocketAddr, sync::Arc};
 
+use crate::handlers::kv_checkpoints::KvCheckpoints;
+use crate::handlers::kv_objects::KvObjects;
+use crate::handlers::kv_transactions::KvTransactions;
+use crate::handlers::tx_affected_objects::TxAffectedObjects;
+use crate::handlers::tx_balance_changes::TxBalanceChanges;
 use anyhow::{Context, Result};
 use db::{Db, DbConfig};
 use handlers::{pipeline, CommitterConfig, Handler};
@@ -15,6 +20,7 @@ use tokio_util::sync::CancellationToken;
 use tracing::info;
 
 pub mod args;
+pub mod benchmark;
 pub mod db;
 pub mod handlers;
 pub mod ingestion;
@@ -75,12 +81,12 @@ pub struct IndexerConfig {
     /// ingestion will start just after the lowest checkpoint watermark across all active
     /// pipelines.
     #[arg(long)]
-    first_checkpoint: Option<u64>,
+    pub first_checkpoint: Option<u64>,
 
     /// Override for the checkpoint to end ingestion at (inclusive) -- useful for backfills. By
     /// default, ingestion will not stop, and will continue to poll for new checkpoints.
     #[arg(long)]
-    last_checkpoint: Option<u64>,
+    pub last_checkpoint: Option<u64>,
 
     /// Only run the following pipelines -- useful for backfills. If not provided, all pipelines
     /// will be run.
@@ -160,6 +166,15 @@ impl Indexer {
         self.handles.push(handler);
         self.handles.push(committer);
 
+        Ok(())
+    }
+
+    pub async fn register_pipelines(&mut self) -> Result<()> {
+        self.pipeline::<KvCheckpoints>().await?;
+        self.pipeline::<KvObjects>().await?;
+        self.pipeline::<KvTransactions>().await?;
+        self.pipeline::<TxAffectedObjects>().await?;
+        self.pipeline::<TxBalanceChanges>().await?;
         Ok(())
     }
 
