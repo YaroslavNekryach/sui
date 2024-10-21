@@ -33,13 +33,13 @@ pub struct IngestionService {
 #[derive(clap::Args, Debug, Clone)]
 pub struct IngestionConfig {
     /// Remote Store to fetch checkpoints from.
-    #[arg(long, required = true, group = "source")]
-    remote_store_url: Option<Url>,
+    #[arg(long)]
+    pub remote_store_url: Option<Url>,
 
     /// Path to the local ingestion directory.
     /// If both remote_store_url and local_ingestion_path are provided, remote_store_url will be used.
-    #[arg(long, required = true, group = "source")]
-    local_ingestion_path: Option<PathBuf>,
+    #[arg(long)]
+    pub local_ingestion_path: Option<PathBuf>,
 
     /// Maximum size of checkpoint backlog across all workers downstream of the ingestion service.
     #[arg(long, default_value_t = 5000)]

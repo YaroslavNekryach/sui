@@ -9,7 +9,7 @@ use sui_synthetic_ingestion::SyntheticIngestionConfig;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let args = BenchmarkArgs::parse();
+    let mut args = BenchmarkArgs::parse();
     let first_checkpoint = args
         .indexer_config
         .first_checkpoint
@@ -32,6 +32,8 @@ async fn main() -> anyhow::Result<()> {
         num_checkpoints,
         starting_checkpoint: first_checkpoint,
     };
+    args.indexer_config.ingestion_config.local_ingestion_path = Some(ingestion_dir);
+
     let indexer = BenchmarkIndexer::new(args);
     run_benchmark(synthetic_ingestion_config, indexer).await;
 
